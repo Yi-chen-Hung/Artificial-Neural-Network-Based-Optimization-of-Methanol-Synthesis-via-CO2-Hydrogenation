@@ -15,3 +15,11 @@ for target in targets:
     n+=1
 Possible_para=corr_comp[~corr_comp.index.str.contains("STREAMS")].fillna(0) #remove the mass/mole flow which is certainly related with target parameter
 Possible_para
+
+-------------------------------------------------------------------------------------------------------------------------------------
+# Optionally, visualize correlations
+# Desired correlation dataframe
+plt.figure(figsize=(10,6))
+sns.heatmap(       , annot=True, cmap="coolwarm", center=0)
+plt.title("Correlation of Features with Targets")
+plt.show()
