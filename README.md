@@ -2,15 +2,15 @@
 
 Using artificial neural network to optimize the methanol synthesis process.<br>
 
-First of all, I have calculated the target parameter (Methanol selectivity, CO2 conversion rate, CO selectivity) 
-based on the mole-flow fraction from reactor's input and output in a real methanol synthesis reactor.
+First of all, I have calculated the Target Parameters (Methanol selectivity, CO2 conversion rate, CO selectivity) 
+based on the mole-flow fraction from reactor's inlet and outlet from the given rawdata (real methanol synthesis reactor).
 
 According to the methanol reaction equation and related formula
-<br>1.  x1 CO2 + 3H2 <--> CH3OH +H2O (main reaction)
-<br>2.  x2 CO + 2H2 <--> CH3OH
-<br>3.  x3 CO2 + H2 <--> CO + H2O (side reaction)
+<br>1.  CO2 + 3H2 <--> CH3OH +H2O (main reaction) ---- x1
+<br>2.  CO + 2H2 <--> CH3OH ---- x2
+<br>3.  CO2 + H2 <--> CO + H2O (side reaction) ---- x3
 
-⚠️ Confirm the calculation steps and logistic with professor
+⚠️ Confirm the calculation steps and background logistic with professor
 
 Example code:<br>
 [Target parameter calculation.py](Target%20parameter%20calculation.py)<br>
