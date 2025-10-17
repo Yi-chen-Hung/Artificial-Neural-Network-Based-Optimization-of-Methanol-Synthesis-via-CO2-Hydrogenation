@@ -8,84 +8,63 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
-def ML_methanol(X,y):
-    # =====================
-    # 1. Train/Test split
-    # =====================
+# Target parameters
+targets = ["Methanol_lag", "CO2_lag", "CO_lag"]  #y
+
+def evaluate_mlp(X, y, name):
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
+    X, y, test_size=0.2, random_state=42
     )
-    
-    # =====================
-    # 2. Scaling
-    # =====================
+    # Standardize inputs
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
-    
-    # =====================
-    # 3. Build and Train MLPRegressor
-    # =====================
+
+    # Build comparable model
     mlp = MLPRegressor(
         hidden_layer_sizes=(64, 32, 16),  # 3 hidden layers
         activation="relu",
+        learning_rate_init=1e-3,
         solver="adam",
         max_iter=2000,
         random_state=42,
         early_stopping=True
     )
-    
+
+    # Train and evaluate
     mlp.fit(X_train_scaled, y_train)
     
-    # =====================
-    # 4. Evaluate
-    # =====================
-    y_pred = mlp.predict(X_test_scaled)
-    Analysis_df=pd.DataFrame(index=targets, columns=['RMSE','R²'])
-    for i, target in enumerate(targets):
-        rmse = np.sqrt(mean_squared_error(y_test.iloc[:, i], y_pred[:, i]))
-        r2 = r2_score(y_test.iloc[:, i], y_pred[:, i])
-        Analysis_df.loc[target,'RMSE']=round(rmse,3)
-        Analysis_df.loc[target, 'R²']=round(r2,3)
-    
-    
-    # =====================
-    # 5. Parity plots
-    # =====================
-    for i, target in enumerate(targets):
-        plt.figure(figsize=(5,5))
-        plt.scatter(y_test.iloc[:, i], y_pred[:, i], alpha=0.7)
-        plt.plot([y_test.iloc[:, i].min(), y_test.iloc[:, i].max()],
-                 [y_test.iloc[:, i].min(), y_test.iloc[:, i].max()],
-                 'r--')
-        plt.xlabel("Actual")
-        plt.ylabel("Predicted")
-        plt.title(f"Parity plot for {target}")
-    
-    return Analysis_df, plt.show()
+    y_pred_val = mlp.predict(X_test_scaled)
+    mse_list=[]
+    r2_list=[]
+    for i in range(len(targets)):
+        mse= mean_squared_error(y_test.iloc[:,i], y_pred_val[:,i])
+        r2= r2_score(y_test.iloc[:,i], y_pred_val[:,i])
+        mse_list.append(mse)
+        r2_list.append(r2)
+        # print(f"{name:5s} -> Type:  {targets[i]} | Val MSE: {mse:.4f} | Val R²: {r2:.4f}")
+        
+    return {'Model': name, 'MSE': mse_list, 'R²': r2_list}
 
 #----------------------------------------------------------------------------------------------------------------------------------
-# Target parameters
-targets = ["Methanol_lag", "CO2_lag", "CO_lag"]  #y
-
 # PCs only
-Target_df=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]),Fdata_profil[['Methanol_lag','CO2_lag','CO_lag']].loc[2:,:].reset_index(drop=True)] ,axis=1) 
-Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
+PCs_only=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]),Fdata_profil[['Methanol_lag','CO2_lag','CO_lag']].loc[2:,:].reset_index(drop=True)] ,axis=1) 
+PCs_only_df=PCs_only.drop(columns=[col for col in PCs_only.columns if col in targets]) #X
 
 # Top-originals+PCs
 Top_PC=top_per_pc.get('PC1')+['Methanol_lag','CO2_lag','CO_lag']
-Target_df=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]), Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)],axis=1)
-Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
+Top_plus_PCs=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]), Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)],axis=1)
+Top_plus_PCs_df=Top_plus_PCs.drop(columns=[col for col in Top_plus_PCs.columns if col in targets])  #X
 
 # Unions of Top-originals
 Top_PC=list(set(top_per_pc.get('PC1')).union(top_per_pc.get('PC2')).union(top_per_pc.get('PC3')))+['Methanol_lag','CO2_lag','CO_lag']
-Target_df=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]), Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)],axis=1)
-Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
+Top_union=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]), Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)],axis=1)
+Top_union_df=Top_union.drop(columns=[col for col in Top_union.columns if col in targets])  #X
 
 #Top_original only
 Top_PC=top_per_pc.get('PC1')+['Methanol_lag','CO2_lag','CO_lag']
-Target_df=Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)
-Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
+Top_only=Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)
+Top_only_df=Top_only.drop(columns=[col for col in Top_only.columns if col in targets])  #X
 
-# Apply different input combination to define function
-ML_methanol(X : Target_df.drop(columns=[col for col in Target_df.columns if col in targets]), y : Target_df[targets])
+# Apply different input combination into define function
+# ML_methanol(X : Target_df, y : Type[targets])
