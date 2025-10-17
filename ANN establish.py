@@ -8,81 +8,84 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
-# =====================
-# 1. Load data
-# =====================
-Target_df=df_new.drop(columns=['Time'])
+def ML_methanol(X,y):
+    # =====================
+    # 1. Train/Test split
+    # =====================
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    
+    # =====================
+    # 2. Scaling
+    # =====================
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    # =====================
+    # 3. Build and Train MLPRegressor
+    # =====================
+    mlp = MLPRegressor(
+        hidden_layer_sizes=(64, 32, 16),  # 3 hidden layers
+        activation="relu",
+        solver="adam",
+        max_iter=2000,
+        random_state=42,
+        early_stopping=True
+    )
+    
+    mlp.fit(X_train_scaled, y_train)
+    
+    # =====================
+    # 4. Evaluate
+    # =====================
+    y_pred = mlp.predict(X_test_scaled)
+    Analysis_df=pd.DataFrame(index=targets, columns=['RMSE','R²'])
+    for i, target in enumerate(targets):
+        rmse = np.sqrt(mean_squared_error(y_test.iloc[:, i], y_pred[:, i]))
+        r2 = r2_score(y_test.iloc[:, i], y_pred[:, i])
+        Analysis_df.loc[target,'RMSE']=round(rmse,3)
+        Analysis_df.loc[target, 'R²']=round(r2,3)
+    
+    
+    # =====================
+    # 5. Parity plots
+    # =====================
+    for i, target in enumerate(targets):
+        plt.figure(figsize=(5,5))
+        plt.scatter(y_test.iloc[:, i], y_pred[:, i], alpha=0.7)
+        plt.plot([y_test.iloc[:, i].min(), y_test.iloc[:, i].max()],
+                 [y_test.iloc[:, i].min(), y_test.iloc[:, i].max()],
+                 'r--')
+        plt.xlabel("Actual")
+        plt.ylabel("Predicted")
+        plt.title(f"Parity plot for {target}")
+    
+    return Analysis_df, plt.show()
 
-# Define target columns
-targets = ["Methanol selectivity %", "CO2 conversion rate %", "CO selectivity %"]
-selected_features = [
-'BLOCKS("C1").Bpower',
-'BLOCKS("HX1").T_in',
-'BLOCKS("C2").Bpower',
-'BLOCKS("C2").Pout',
-'BLOCKS("FEHE").T_in_hot',
-'BLOCKS("FEHE").T_in_cold',
-'BLOCKS("FEHE").T_out_hot',
-'BLOCKS("FEHE").T_out_cold',
-'BLOCKS("FEHE").Q',
-'B6.Output_',
-'BLOCKS("REACTOR").P.Value(0)',
-'BLOCKS("REACTOR").P_out',
-'BLOCKS("SF-1").sf("VENT")',
-'BLOCKS("FL1").level'
-]
+#----------------------------------------------------------------------------------------------------------------------------------
+# Target parameters
+targets = ["Methanol_lag", "CO2_lag", "CO_lag"]  #y
 
-X = Target_df[selected_features]
-y = Target_df[targets]
+# PCs only
+Target_df=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]),Fdata_profil[['Methanol_lag','CO2_lag','CO_lag']].loc[2:,:].reset_index(drop=True)] ,axis=1) 
+Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
 
-# =====================
-# 2. Train/Test split
-# =====================
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+# Top-originals+PCs
+Top_PC=top_per_pc.get('PC1')+['Methanol_lag','CO2_lag','CO_lag']
+Target_df=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]), Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)],axis=1)
+Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
 
-# =====================
-# 3. Scaling
-# =====================
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+# Unions of Top-originals
+Top_PC=list(set(top_per_pc.get('PC1')).union(top_per_pc.get('PC2')).union(top_per_pc.get('PC3')))+['Methanol_lag','CO2_lag','CO_lag']
+Target_df=pd.concat([pd.DataFrame(X_pca,columns=["PCA1", "PCA2", "PCA3"]), Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)],axis=1)
+Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
 
-# =====================
-# 4. Build and Train MLPRegressor
-# =====================
-mlp = MLPRegressor(
-    hidden_layer_sizes=(64, 32, 16),  # 3 hidden layers
-    activation="relu",
-    solver="adam",
-    max_iter=2000,
-    random_state=42,
-    early_stopping=True
-)
+#Top_original only
+Top_PC=top_per_pc.get('PC1')+['Methanol_lag','CO2_lag','CO_lag']
+Target_df=Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)
+Target_df.drop(columns=[col for col in Target_df.columns if col in targets])  #X
 
-mlp.fit(X_train_scaled, y_train)
-
-# =====================
-# 5. Evaluate
-# =====================
-y_pred = mlp.predict(X_test_scaled)
-
-for i, target in enumerate(targets):
-    rmse = np.sqrt(mean_squared_error(y_test.iloc[:, i], y_pred[:, i]))
-    r2 = r2_score(y_test.iloc[:, i], y_pred[:, i])
-    print(f"{target}: RMSE={rmse:.3f}, R²={r2:.3f}")
-
-# =====================
-# 6. Parity plots
-# =====================
-for i, target in enumerate(targets):
-    plt.figure(figsize=(5,5))
-    plt.scatter(y_test.iloc[:, i], y_pred[:, i], alpha=0.7)
-    plt.plot([y_test.iloc[:, i].min(), y_test.iloc[:, i].max()],
-             [y_test.iloc[:, i].min(), y_test.iloc[:, i].max()],
-             'r--')
-    plt.xlabel("Actual")
-    plt.ylabel("Predicted")
-    plt.title(f"Parity plot for {target}")
-    plt.show()
+# Apply different input combination to define function
+ML_methanol(X : Target_df.drop(columns=[col for col in Target_df.columns if col in targets]), y : Target_df[targets])
