@@ -65,6 +65,3 @@ Top_union_df=Top_union.drop(columns=[col for col in Top_union.columns if col in 
 Top_PC=top_per_pc.get('PC1')+['Methanol_lag','CO2_lag','CO_lag']
 Top_only=Fdata_profil[Top_PC].loc[2:,:].reset_index(drop=True)
 Top_only_df=Top_only.drop(columns=[col for col in Top_only.columns if col in targets])  #X
-
-# Apply different input combination into define function
-# ML_methanol(X : Target_df, y : Type[targets])
