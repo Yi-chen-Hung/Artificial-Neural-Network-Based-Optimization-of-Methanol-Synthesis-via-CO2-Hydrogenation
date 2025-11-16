@@ -19,8 +19,11 @@ y_test_scaled = scaler.transform(y_test)
 #---------------------------------------------------------------------------------------------------------------------------------------------------
 # Feature importance and sensitivity
 from sklearn.inspection import permutation_importance
-mlp.fit(X_train_scaled, y_train_scaled)  # <-- not X_train.values
-result = permutation_importance(mlp, X_test_scaled, y_test_scaled, n_repeats=10, random_state=0)
+from sklearn.metrics import mean_absolute_percentage_error, make_scorer
+mape_scorer = make_scorer(mean_absolute_percentage_error, greater_is_better=False)
+
+mlp.fit(X_train_scaled, y_train_scaled) 
+result = permutation_importance(mlp, X_train_scaled, y_train_scaled, n_repeats=10, scoring=mape_scorer , random_state=0) # MAPE as my score
 importance_df = pd.DataFrame({'feature': Top_union_df.columns, 'importance': result.importances_mean})
 importance_df=importance_df.sort_values('importance', ascending=False).reset_index(drop=True)
 #---------------------------------------------------------------------------------------------------------------------------------------------------
