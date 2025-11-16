@@ -47,6 +47,10 @@ mlp.fit(X_train_scaled, y_train_scaled)
 
 y_pred_val = mlp.predict(X_test_scaled)
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Saved trained ANN model
+import joblib
+joblib.dump(mlp, "Methanol_synthesis_ANN.pkl")
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Feature importance and sensitivity
 from sklearn.inspection import permutation_importance
 mlp.fit(X_train, y_train)  # <-- not X_train.values
