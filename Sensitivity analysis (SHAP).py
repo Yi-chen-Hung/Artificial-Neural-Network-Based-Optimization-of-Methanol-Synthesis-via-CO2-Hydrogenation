@@ -17,13 +17,14 @@ X_test_scaled = scaler.transform(X_test)
 y_train_scaled = scaler.fit_transform(y_train)
 y_test_scaled = scaler.transform(y_test)
 #---------------------------------------------------------------------------------------------------------------------------------------------------
+# Feature importance and sensitivity
 from sklearn.inspection import permutation_importance
 mlp.fit(X_train_scaled, y_train_scaled)  # <-- not X_train.values
 result = permutation_importance(mlp, X_test_scaled, y_test_scaled, n_repeats=10, random_state=0)
 importance_df = pd.DataFrame({'feature': Top_union_df.columns, 'importance': result.importances_mean})
 importance_df=importance_df.sort_values('importance', ascending=False).reset_index(drop=True)
 #---------------------------------------------------------------------------------------------------------------------------------------------------
-# Scoreing = R2
+# Scoreing = R2 and plot
 import matplotlib.pyplot as plt
 
 feature_counts = [3, 6, 9, 12, 15, 18, 21, 24, 26]
