@@ -62,7 +62,7 @@ for n in range(1,len(RCT_IN)+1):
     CO2_in = Totalmoleflow*(RCT_IN.loc[n,'STREAMS("RCT-IN").Zn("CO2")'])
     CO2_conv = (x1 + x3) / CO2_in * 100
     # CO selectivity
-    CO_selectivity= x2 / (x1 +x2) * 100
+    CO_selectivity= x3 / (x1 +x3) * 100
     df_new.loc[n,'Methanol selectivity %']=Me_selectivity
     df_new.loc[n,'CO2 conversion rate %']=CO2_conv
     df_new.loc[n,'CO selectivity %']=CO_selectivity
