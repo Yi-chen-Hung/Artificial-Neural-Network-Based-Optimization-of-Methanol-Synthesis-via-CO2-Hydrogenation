@@ -1,6 +1,7 @@
-# Methanol-synthesis-optimization
-
-Using artificial neural network to optimize the methanol synthesis process.<br>
+# **ANN optimization of methanol synthesis via CO2 hydrogenation**<br>
+## Short Description:<br>
+Combining Aspen Plus process simulation and artificial neural network (ANN) modeling to predict 
+methanol selectivity, CO₂ conversion, and CO selectivity in methanol synthesis via CO₂ hydrogenation.<br>
 
 First of all, I have calculated the Target Parameters (Methanol selectivity, CO2 conversion rate, CO selectivity) 
 based on the mole-flow fraction from reactor's inlet and outlet from the given rawdata (real methanol synthesis reactor).
