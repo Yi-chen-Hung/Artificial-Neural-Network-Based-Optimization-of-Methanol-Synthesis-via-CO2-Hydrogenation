@@ -1,4 +1,4 @@
-# Methanol-syntehsis-optimization
+# Methanol-synthesis-optimization
 
 Using artificial neural network to optimize the methanol synthesis process.<br>
 
