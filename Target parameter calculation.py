@@ -67,3 +67,5 @@ for n in range(1,len(RCT_IN)+1):
     df_new.loc[n,'CO2 conversion rate %']=CO2_conv
     df_new.loc[n,'CO selectivity %']=CO_selectivity
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+for typ in ['insert_up','osci','profil','rauf','runter']:
+    globals()[f"New_data_{typ}"].to_excel(f"Fdata_{typ}.xlsx",index=False)
