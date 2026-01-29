@@ -1,4 +1,4 @@
-# Artificial Neural Network based optimization of Methanol synthesis via CO2 Hydrogenation
+# Artificial Neural Network based optimization of Methanol synthesis via CO₂ Hydrogenation
 ## 🧠 Project Overview
 
 This project applies **Artificial Neural Networks (ANNs)** to model and optimize the performance of **methanol synthesis via CO₂ hydrogenation**, a key process in sustainable chemical production and carbon utilization.
@@ -30,20 +30,19 @@ The dataset is generated using **Aspen Plus** process simulation and divided int
 
 ### 1️⃣ Simulated Scenario
 - Fully simulated operating conditions  
-- Idealized, noise-free process data  
-- Used to evaluate baseline ANN prediction performance  
+- Included specific molcular mass flow rate and mole flow rate    
 
 ### 2️⃣ Real-World Scenario
-- Simulation data adjusted to reflect realistic operational uncertainties  
-- Includes variability and noise representative of industrial conditions  
-- Used to assess ANN robustness and practical applicability  
+- Simulation data remove the characteristic of 
 
-### Input Parameters (examples)
-- Reactor temperature  
-- Reactor pressure  
-- H₂/CO₂ feed ratio  
-- Space velocity  
-- Feed composition  
+### Input Parameters
+- Mole fraction
+- Molecular mass flow rate
+- Molecular mole flow rate
+- Component temperature  
+- Component pressure    
+- Volumetric flow rate  
+- Reactor residence time  
 
 ### Output Targets
 - Methanol selectivity  
@@ -54,20 +53,22 @@ The dataset is generated using **Aspen Plus** process simulation and divided int
 
 ## 🧠 Methodology
 
-1. **Process Simulation**  
-   - Methanol synthesis via CO₂ hydrogenation modeled in Aspen Plus  
-   - Steady-state operating data exported for machine learning  
+1. **Data Construction**  
+   - Derivative-based features and rolling-window statistics were introduced  
+   - Time-lagged features were incorporated  
 
 2. **Data Preprocessing**  
-   - Data normalization  
-   - Scenario-based dataset separation  
+   - Data removes incomplete and inconsistent record 
+   - Scenario-based dataset separation
+   - Dimensionality reduction through Pearson correlation and PCA analysis
    - Training / validation / testing split  
 
 3. **ANN Model Development**  
-   - Feed-forward artificial neural networks  
-   - Hyperparameter tuning (layers, neurons, activation functions)  
+   - ANN model input combination optimization  
+   - Hyperparameter tuning (hidden-layers, neurons, activation functions, initial learning rate)  
    - Performance evaluation using statistical metrics  
 
 4. **Parameter Importance Analysis**  
-   - Sensitivity analysis based on ANN predictions  
+   - Permutation importance
+   - SHAP analysis  
    - Identification of essential monitoring variables  
