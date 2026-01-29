@@ -1,51 +1,73 @@
-# **ANN optimization of methanol synthesis via CO2 hydrogenation**<br>
-## Short Description:<br>
-Combining Aspen Plus process simulation and artificial neural network (ANN) modeling to predict 
-methanol selectivity, CO₂ conversion, and CO selectivity in methanol synthesis via CO₂ hydrogenation.<br>
+# Artificial Neural Network based optimization of Methanol synthesis via CO2 Hydrogenation
+## 🧠 Project Overview
 
-First of all, I have calculated the Target Parameters (Methanol selectivity, CO2 conversion rate, CO selectivity) 
-based on the mole-flow fraction from reactor's inlet and outlet from the given rawdata (real methanol synthesis reactor).
+This project applies **Artificial Neural Networks (ANNs)** to model and optimize the performance of **methanol synthesis via CO₂ hydrogenation**, a key process in sustainable chemical production and carbon utilization.
 
-According to the methanol reaction equation and related formula
-<br>1.  CO2 + 3H2 <--> CH3OH +H2O (main reaction) ---- x1
-<br>2.  CO + 2H2 <--> CH3OH ---- x2
-<br>3.  CO2 + H2 <--> CO + H2O (side reaction) ---- x3
+Process data generated from **Aspen Plus simulations** are used to train ANN models capable of predicting critical performance indicators, including:
 
-⚠️ Confirm the calculation steps and background logistic with professor
+- Methanol selectivity  
+- CO₂ conversion rate  
+- CO selectivity  
 
-Example code:<br>
-[Target parameter calculation.py](Target%20parameter%20calculation.py)<br>
-Dataframe Output:<br>
-![Target_parameter](images/Target_parameter_calculation.png)<br>
+The trained models are further analyzed to identify the **most essential process parameters**, with the objective of **minimizing the number of required monitoring detectors** while maintaining accurate process control and optimization.
 
+---
 
-# Feature selection and correlation
-Since there are too many potential columns in the raw data that could be used as the input of an artificial neuron network model, so the feature selection is inevitably need to be operated<br>
-I have ran over the correlation analysis between Target parameters and all the 74 columns and filter the one whose |r|>0.5 (non-stream related).
-There are 14 potential columns that could be used in my ANN model input parameters.
+## 🎯 Objectives
 
-⚠️ Analysis component by component of their correlation to the Target parameters <br>
-⚠️ Principal component analysis (PCA) could be added
+- Develop ANN models to accurately predict methanol synthesis performance  
+- Compare ANN performance under **two data scenarios**:
+  - **Simulated data**
+  - **Real-world data**
+- Identify key operating parameters influencing process performance  
+- Reduce monitoring complexity by determining the minimum set of essential variables  
 
-Example code:<br>
-[Feature selection and correlation](Feature%20selection%20and%20correaltion.py)<br>
-Correlation Output:<br>
-![Target_correlation](images/Feature%20selection%20and%20correlation.png)
+---
 
-# Simple ANN establishment
-ANN hyperparameters:<br>
-Algorithms : Multi-Layer Perceptron for regression <br>
-Number of hiddden layers : 3 <br>
-Number of neurons in each layer: (64, 32, 16)<br>
-Activation function : ReLU <br>
+## 📊 Dataset Description
 
-⚠️ Try to adjust the hyperparameters of the ANN model so as to improve model's performance
+The dataset is generated using **Aspen Plus** process simulation and divided into two scenarios:
 
-Example code:<br>
-[ANN establishment](ANN%20establish.py).<br>
-First Training Output:<br>
-![Accuracy](images/ANN%20first%20run%20accuracy.png)
-![Methanol selectivity](images/Methanol%20selectivity%20ANN%20parity.png)
-![CO2 conversion rate](images/CO2%20conversion%20rate%20ANN%20parity.png)
-![CO selectivity](images/CO%20selectivity%20ANN%20parity.png)
+### 1️⃣ Simulated Scenario
+- Fully simulated operating conditions  
+- Idealized, noise-free process data  
+- Used to evaluate baseline ANN prediction performance  
 
+### 2️⃣ Real-World Scenario
+- Simulation data adjusted to reflect realistic operational uncertainties  
+- Includes variability and noise representative of industrial conditions  
+- Used to assess ANN robustness and practical applicability  
+
+### Input Parameters (examples)
+- Reactor temperature  
+- Reactor pressure  
+- H₂/CO₂ feed ratio  
+- Space velocity  
+- Feed composition  
+
+### Output Targets
+- Methanol selectivity  
+- CO₂ conversion  
+- CO selectivity  
+
+---
+
+## 🧠 Methodology
+
+1. **Process Simulation**  
+   - Methanol synthesis via CO₂ hydrogenation modeled in Aspen Plus  
+   - Steady-state operating data exported for machine learning  
+
+2. **Data Preprocessing**  
+   - Data normalization  
+   - Scenario-based dataset separation  
+   - Training / validation / testing split  
+
+3. **ANN Model Development**  
+   - Feed-forward artificial neural networks  
+   - Hyperparameter tuning (layers, neurons, activation functions)  
+   - Performance evaluation using statistical metrics  
+
+4. **Parameter Importance Analysis**  
+   - Sensitivity analysis based on ANN predictions  
+   - Identification of essential monitoring variables  
