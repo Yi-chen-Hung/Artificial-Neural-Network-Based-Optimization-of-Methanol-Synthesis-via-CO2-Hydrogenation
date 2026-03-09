@@ -15,7 +15,20 @@ for Type in ['insert_up','osci','profil','rauf','runter']:
         for col in name.select_dtypes(include=['object']).columns:
             name[col] = pd.to_numeric(name[col], errors='coerce') # NaN for invalid values
 General_data_insert_up.head()
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+def add_Dynamic_features(df, cols1, cols2, window_size, time_col='Time'):
+    df_calculate = df.copy()
+    dt = df_calculate[time_col].diff().mean() * 3600  # seconds per step
+    # Derivative (rate of change)
+    for col in cols1:
+        df_calculate[f"{col}_derivative"] = df_calculate[col].diff() / dt
+    
+    # Volatility (rolling std)
+    for col in cols2:
+        df_calculate[f"{col}_V_10min"] = (
+            df_calculate[col].rolling(window=window_size, min_periods=1).std()
+        )
+    return df_calculate
 # Methanol selectivity, CO2 conversion rate, CO selectivity calculation
 for i in ['profil']:
     SYNGAS=globals()[f"General_data_{i}"].filter(like='Time').join(globals()[f"General_data_{i}"].filter(like='SYNGAS')).dropna()
