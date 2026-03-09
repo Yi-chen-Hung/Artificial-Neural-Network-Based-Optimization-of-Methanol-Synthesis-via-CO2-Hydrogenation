@@ -66,6 +66,31 @@ for n in range(1,len(RCT_IN)+1):
     df_new.loc[n,'Methanol selectivity %']=Me_selectivity
     df_new.loc[n,'CO2 conversion rate %']=CO2_conv
     df_new.loc[n,'CO selectivity %']=CO_selectivity
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Calculate volumetric flow rate / Residence Time
+    df_new['V_flow(m^3/s)']=(df_new['STREAMS("RCT-IN").F']*1000/3600*8.314*(df_new['STREAMS("RCT-IN").T']+273.15))/(df_new['BLOCKS("REACTOR").P.Value(0)']*10**5)
+    df_new['Residence Time(s)']=(3.14*0.02**2*7*1400)/df_new['V_flow(m^3/s)']
+
+    # Derivative and Volatility interested list
+    col_to_process_derivative=['BLOCKS("HX1").T_in','BLOCKS("C2").Pout','BLOCKS("FEHE").T_in_hot',
+                                'BLOCKS("FEHE").T_in_cold','BLOCKS("FEHE").T_out_hot','BLOCKS("FEHE").T_out_cold',
+                                'BLOCKS("FEHE").Q','BLOCKS("REACTOR").P_out','BLOCKS("SF-1").sf("VENT")']
+    
+    col_to_process_volatility=['STREAMS("SYNGAS").Fcn("H2")','STREAMS("S5").Fcn("H2")','STREAMS("FL-IN").Fcn("H2")',
+                              'STREAMS("FL-IN").Fcn("H2O")','STREAMS("FL-L").Fcn("CO2")','STREAMS("FL-V").Fcn("CO2")',
+                              'STREAMS("RCT-IN").F','STREAMS("RCT-OUTH").Zn("H2")']
+    
+    Component=['SYNGAS','HX1','S5','FEHE','REACTOR','FL-IN','FL-L','FL-V','RCT-IN','RCT-OUT','VENT']
+    
+    window_time = 600  # 10 minutes
+    window_size = 60  # number of rows in 10 min
+
+    # Time lagged features
+    df_new['Methanol_lag']=df_new['Methanol selectivity %'].shift(-1)
+    df_new['CO2_lag']=df_new['CO2 conversion rate %'].shift(-1)
+    df_new['CO_lag']=df_new['CO selectivity %'].shift(-1)
+    
+    globals()[f"New_data_{i}"]=add_Dynamic_features(df_new, col_to_process_derivative, col_to_process_volatility , window_size)
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------
 for typ in ['insert_up','osci','profil','rauf','runter']:
     globals()[f"New_data_{typ}"].to_excel(f"Fdata_{typ}.xlsx",index=False)
