@@ -33,7 +33,7 @@ The dataset is generated using **Aspen Plus** process simulation and divided int
 - Included specific molcular mass flow rate and mole flow rate    
 
 ### 2️⃣ Real-World Scenario
-- Simulation data remove the characteristic of 
+- Simulation data remove the characteristic of specific molecule 
 
 ### Input Parameters
 - Mole fraction
