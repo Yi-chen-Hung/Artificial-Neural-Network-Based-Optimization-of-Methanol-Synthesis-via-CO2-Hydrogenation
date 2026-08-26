@@ -3,7 +3,7 @@
 
 This project applies **Artificial Neural Networks (ANNs)** to model and optimize the performance of **methanol synthesis via CO₂ hydrogenation**, a key process in sustainable chemical production and carbon utilization.
 
-Process data generated from **Aspen Plus simulations** are used to train ANN models capable of predicting critical performance indicators, including:
+Process data generated from **Aspen Plus Dynamics simulations** are used to train ANN models capable of predicting critical performance indicators, including:
 
 - Methanol selectivity  
 - CO₂ conversion rate  
@@ -26,14 +26,14 @@ The trained models are further analyzed to identify the **most essential process
 
 ## 📊 Dataset Description
 
-The dataset is generated using **Aspen Plus** process simulation and divided into two scenarios:
+The dataset is generated using **Aspen Plus Dynamics** process simulation and divided into two scenarios:
 
 ### 1️⃣ Simulated Scenario
 - Fully simulated operating conditions  
-- Included specific molcular mass flow rate and mole flow rate    
+- Included specific molecular mass flow rate and mole flow rate at different components    
 
 ### 2️⃣ Real-World Scenario
-- Simulation data remove the characteristic of specific molecule 
+- Simulation data remove the characteristic of specific molecule at different components
 
 ### Input Parameters
 - Mole fraction
